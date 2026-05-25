@@ -1,6 +1,6 @@
 import { getDb } from '@/db/client';
 import { items } from '@/db/schema';
-import { cosineSimilarity } from '@/lib/cosine';
+import { cosineSimilarity, float32ArrayFromBuffer } from '@/lib/cosine';
 import { embed } from 'ai';
 
 export async function semanticSearch(query: string, limit = 5) {
@@ -19,7 +19,7 @@ export async function semanticSearch(query: string, limit = 5) {
     .filter((item) => item.embedding)
     .map((item) => ({
       item,
-      score: cosineSimilarity(queryVec, new Float32Array(item.embedding as Buffer)),
+      score: cosineSimilarity(queryVec, float32ArrayFromBuffer(item.embedding as Buffer)),
     }));
 
   scored.sort((a, b) => b.score - a.score);

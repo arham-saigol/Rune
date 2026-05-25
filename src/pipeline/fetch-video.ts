@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { readFileSync, existsSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
 
@@ -7,8 +7,16 @@ const DATA_DIR = process.env.DATA_DIR || './data';
 export async function fetchVideo(url: string, id: string): Promise<string | null> {
   const outputPath = resolve(DATA_DIR, 'media', `${id}.wav`);
   try {
-    execSync(
-      `yt-dlp -x --audio-format wav -o "${resolve(DATA_DIR, 'media', `${id}.%(ext)s`)}" "${url}"`,
+    execFileSync(
+      'yt-dlp',
+      [
+        '-x',
+        '--audio-format',
+        'wav',
+        '-o',
+        resolve(DATA_DIR, 'media', `${id}.%(ext)s`),
+        url,
+      ],
       { timeout: 120000, stdio: 'pipe' }
     );
   } catch {

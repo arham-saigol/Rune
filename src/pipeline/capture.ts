@@ -54,7 +54,10 @@ export async function captureItem(url: string, userContext?: string) {
     content: content ?? undefined,
     userContext,
     illustration: JSON.stringify(catalog.illustration),
-    embedding: Buffer.from(new Float32Array(embedding).buffer),
+    embedding: (() => {
+      const arr = new Float32Array(embedding);
+      return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength);
+    })(),
     status: 'unread',
     pinned: 0,
     createdAt: now,

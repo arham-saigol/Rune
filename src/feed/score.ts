@@ -1,6 +1,6 @@
 import { getDb } from '@/db/client';
 import { items, tags, itemTags } from '@/db/schema';
-import { cosineSimilarity, normalizeScores } from '@/lib/cosine';
+import { cosineSimilarity, float32ArrayFromBuffer, normalizeScores } from '@/lib/cosine';
 import { FEED_WEIGHTS } from '@/lib/constants';
 import { eq, gte, and } from 'drizzle-orm';
 
@@ -51,11 +51,11 @@ export function scoreFeed(): ScoredItem[] {
 
   const recentEmbeddings = recentReads
     .filter((r) => r.embedding)
-    .map((r) => new Float32Array(r.embedding as Buffer));
+    .map((r) => float32ArrayFromBuffer(r.embedding as Buffer));
 
   const recencySimilarity = unreadItems.map((item) => {
     if (!item.embedding || recentEmbeddings.length === 0) return 0;
-    const itemVec = new Float32Array(item.embedding as Buffer);
+    const itemVec = float32ArrayFromBuffer(item.embedding as Buffer);
     return Math.max(...recentEmbeddings.map((r) => cosineSimilarity(itemVec, r)));
   });
 
@@ -88,11 +88,11 @@ export function scoreFeed(): ScoredItem[] {
   const pinnedItems = db.select().from(items).where(eq(items.pinned, 1)).all();
   const pinnedEmbeddings = pinnedItems
     .filter((p) => p.embedding)
-    .map((p) => new Float32Array(p.embedding as Buffer));
+    .map((p) => float32ArrayFromBuffer(p.embedding as Buffer));
 
   const pinnedSimilarity = unreadItems.map((item) => {
     if (!item.embedding || pinnedEmbeddings.length === 0) return 0;
-    const itemVec = new Float32Array(item.embedding as Buffer);
+    const itemVec = float32ArrayFromBuffer(item.embedding as Buffer);
     return Math.max(...pinnedEmbeddings.map((p) => cosineSimilarity(itemVec, p)));
   });
 
