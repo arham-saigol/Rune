@@ -1,0 +1,45 @@
+{
+  "name": "rune",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "cli": "tsx cli/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "tsx src/db/seed.ts",
+    "gateway": "tsx src/server/gateway.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/deepseek": "2.0.35",
+    "@deepgram/sdk": "^3.9.0",
+    "better-sqlite3": "^12.0.0",
+    "dotenv": "^16.4.0",
+    "chat": "^4.0.0",
+    "@chat-adapter/discord": "^4.0.0",
+    "commander": "^13.0.0",
+    "drizzle-orm": "^0.41.0",
+    "exa-js": "^1.4.0",
+    "inquirer": "^12.0.0",
+    "next": "15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "roughjs": "^4.6.6",
+    "ai": "^6.0.0",
+    "zod": "^3.24.0",
+    "ulidx": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "drizzle-kit": "^0.30.0",
+    "serwist": "^9.0.0",
+    "typescript": "^5.8.0",
+    "tsx": "^4.19.0"
+  }
+}

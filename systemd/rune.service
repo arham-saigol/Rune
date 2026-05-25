@@ -1,0 +1,16 @@
+[Unit]
+Description=Rune Gateway
+After=network.target
+
+[Service]
+Type=simple
+User=rune
+Group=rune
+WorkingDirectory=/opt/rune
+ExecStart=/usr/bin/node /opt/rune/.next/standalone/server.js
+Restart=always
+RestartSec=5
+EnvironmentFile=/opt/rune/.env
+
+[Install]
+WantedBy=multi-user.target

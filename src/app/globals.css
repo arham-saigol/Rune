@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background-color: #f5e6d3;
+    color: #2c1810;
+  }
+}
+
+@layer components {
+  .card {
+    background: #fff8ee;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(44, 24, 16, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(44, 24, 16, 0.12);
+  }
+  .tag-pill {
+    background: #e8d5c0;
+    color: #5a3e2b;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .btn {
+    background: #2c1810;
+    color: #f5e6d3;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn:hover {
+    opacity: 0.9;
+  }
+  .input {
+    background: #fff8ee;
+    border: 1px solid #d4c0a8;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    color: #2c1810;
+    outline: none;
+  }
+  .input:focus {
+    border-color: #2c1810;
+  }
+}
