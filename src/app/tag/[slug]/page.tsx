@@ -31,11 +31,16 @@ export default function TagPage() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [pinnedOnly, setPinnedOnly] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     fetch(`/api/items?tag=${encodeURIComponent(slug)}&sort=created_desc`)
       .then((r) => r.json())
-      .then((data) => setItems(data.items));
+      .then((data) => {
+        setItems(data.items);
+        setIsLoading(false);
+      });
     fetch('/api/tags')
       .then((r) => r.json())
       .then((data) => setTags(data.tags));
@@ -70,7 +75,9 @@ export default function TagPage() {
           onTogglePinned={() => setPinnedOnly((v) => !v)}
         />
       </div>
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="empty-state">loading…</div>
+      ) : filtered.length === 0 ? (
         <div className="empty-state">nothing tagged here yet ~</div>
       ) : (
         <CardGrid items={filtered} />

@@ -46,7 +46,7 @@ export default function AgentPanel({
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ message: contextPrompt }),
+      body: JSON.stringify({ message: contextPrompt, contextItemId: contextItem?.id }),
     });
 
     const reader = res.body?.getReader();

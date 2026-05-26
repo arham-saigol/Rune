@@ -1,13 +1,15 @@
-import { execFileSync } from 'child_process';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 import { readFileSync, existsSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
 
+const execFileAsync = promisify(execFile);
 const DATA_DIR = process.env.DATA_DIR || './data';
 
 export async function fetchVideo(url: string, id: string): Promise<string | null> {
   const outputPath = resolve(DATA_DIR, 'media', `${id}.wav`);
   try {
-    execFileSync(
+    await execFileAsync(
       'yt-dlp',
       [
         '-x',
@@ -17,9 +19,10 @@ export async function fetchVideo(url: string, id: string): Promise<string | null
         resolve(DATA_DIR, 'media', `${id}.%(ext)s`),
         url,
       ],
-      { timeout: 120000, stdio: 'pipe' }
+      { timeout: 120000 }
     );
-  } catch {
+  } catch (err) {
+    console.error('yt-dlp failed:', err);
     return null;
   }
 
@@ -31,7 +34,7 @@ export async function fetchVideo(url: string, id: string): Promise<string | null
     const audioBuffer = readFileSync(outputPath);
     const deepgramKey = process.env.DEEPGRAM_API_KEY;
     if (!deepgramKey) throw new Error('Missing DEEPGRAM_API_KEY');
-    const res = await fetch('https://api.deepgram.com/v1/listen?model=nova-3&language=en', {
+    const res = await fetch('https://api.deepgram.com/v1/listen?model=nova-3&detect_language=true', {
       method: 'POST',
       headers: { Authorization: `Token ${deepgramKey}` },
       body: audioBuffer,
@@ -40,7 +43,8 @@ export async function fetchVideo(url: string, id: string): Promise<string | null
     const transcript = data.results?.channels?.[0]?.alternatives?.[0]?.transcript ?? null;
     unlinkSync(outputPath);
     return transcript;
-  } catch {
+  } catch (err) {
+    console.error('Deepgram transcription failed:', err);
     if (existsSync(outputPath)) unlinkSync(outputPath);
     return null;
   }

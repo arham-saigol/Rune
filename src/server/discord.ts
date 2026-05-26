@@ -36,7 +36,19 @@ export function createBot() {
     state: memoryStateAdapter as any,
   });
 
+  const allowedIds = new Set(
+    (process.env.ALLOWED_DISCORD_USER_IDS || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+  );
+
   bot.onNewMention(async (thread, message) => {
+    if (allowedIds.size > 0 && !allowedIds.has((message.author as any).id)) {
+      await thread.post('You are not authorized to use this bot.');
+      return;
+    }
+
     await thread.subscribe();
 
     const userMessage = message.text;

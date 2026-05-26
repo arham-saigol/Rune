@@ -7,8 +7,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   const body = await req.json();
   const db = getDb();
-  if (body.name) {
-    db.update(tags).set({ name: body.name }).where(eq(tags.id, Number(id))).run();
+  if (body.name && body.name.trim()) {
+    db.update(tags).set({ name: body.name.trim() }).where(eq(tags.id, Number(id))).run();
   }
   return NextResponse.json({ success: true });
 }

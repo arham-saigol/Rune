@@ -32,7 +32,7 @@ export function getModel(modelId: string, prefer?: 'gateway' | 'direct') {
     try {
       const gatewayKey = process.env.VERCEL_AI_GATEWAY_KEY;
       if (!gatewayKey) throw new Error('Missing VERCEL_AI_GATEWAY_KEY');
-      const baseURL = process.env.GATEWAY_BASE_URL || 'https://gateway.ai.cloudflare.com/v1';
+      const baseURL = process.env.GATEWAY_BASE_URL || 'https://gateway.ai.vercel.app/v1';
       const gatewayProvider = createDeepSeek({
         apiKey: gatewayKey,
         baseURL,
@@ -48,7 +48,7 @@ export function getModel(modelId: string, prefer?: 'gateway' | 'direct') {
   } catch {
     const gatewayKey = process.env.VERCEL_AI_GATEWAY_KEY;
     if (!gatewayKey) throw new Error('No AI provider configured');
-    const baseURL = process.env.GATEWAY_BASE_URL || 'https://gateway.ai.cloudflare.com/v1';
+    const baseURL = process.env.GATEWAY_BASE_URL || 'https://gateway.ai.vercel.app/v1';
     const gatewayProvider = createDeepSeek({
       apiKey: gatewayKey,
       baseURL,

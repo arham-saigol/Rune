@@ -41,12 +41,12 @@ export async function POST(req: NextRequest) {
     .all()
     .reverse();
 
-  const result = await runRuneAgent([
-    ...history.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content })),
-    { role: 'user', content: message },
-  ]);
+  const result = await runRuneAgent(
+    history.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }))
+  );
 
   let fullText = '';
+  let completed = false;
   const encoder = new TextEncoder();
 
   const output = new ReadableStream({
@@ -55,19 +55,26 @@ export async function POST(req: NextRequest) {
       try {
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done) {
+            completed = true;
+            break;
+          }
           fullText += value;
           controller.enqueue(encoder.encode(value));
         }
+      } catch (err) {
+        console.error('Chat stream error:', err);
       } finally {
         controller.close();
-        db.insert(messages).values({
-          id: ulid(),
-          conversationId,
-          role: 'assistant',
-          content: fullText,
-          createdAt: Date.now(),
-        }).run();
+        if (completed && fullText) {
+          db.insert(messages).values({
+            id: ulid(),
+            conversationId,
+            role: 'assistant',
+            content: fullText,
+            createdAt: Date.now(),
+          }).run();
+        }
       }
     },
   });

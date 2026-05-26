@@ -28,15 +28,15 @@ export const tags = sqliteTable('tags', {
 });
 
 export const itemTags = sqliteTable('item_tags', {
-  itemId: text('item_id').notNull().references(() => items.id),
-  tagId: integer('tag_id').notNull().references(() => tags.id),
+  itemId: text('item_id').notNull().references(() => items.id, { onDelete: 'cascade' }),
+  tagId: integer('tag_id').notNull().references(() => tags.id, { onDelete: 'cascade' }),
 }, (table) => ({
   pk: primaryKey({ columns: [table.itemId, table.tagId] }),
 }));
 
 export const summaries = sqliteTable('summaries', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  itemId: text('item_id').notNull().references(() => items.id),
+  itemId: text('item_id').notNull().references(() => items.id, { onDelete: 'cascade' }),
   mode: text('mode').notNull(),
   content: text('content').notNull(),
   createdAt: integer('created_at').notNull(),
@@ -47,13 +47,13 @@ export const summaries = sqliteTable('summaries', {
 export const conversations = sqliteTable('conversations', {
   id: text('id').primaryKey(),
   source: text('source').notNull(),
-  contextItemId: text('context_item_id').references(() => items.id),
+  contextItemId: text('context_item_id').references(() => items.id, { onDelete: 'set null' }),
   createdAt: integer('created_at').notNull(),
 });
 
 export const messages = sqliteTable('messages', {
   id: text('id').primaryKey(),
-  conversationId: text('conversation_id').notNull().references(() => conversations.id),
+  conversationId: text('conversation_id').notNull().references(() => conversations.id, { onDelete: 'cascade' }),
   role: text('role').notNull(),
   content: text('content').notNull(),
   createdAt: integer('created_at').notNull(),

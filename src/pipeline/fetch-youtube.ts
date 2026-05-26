@@ -12,7 +12,8 @@ export async function fetchYouTube(url: string, videoId?: string): Promise<strin
     }
     if (data.transcript) return data.transcript;
     return null;
-  } catch {
+  } catch (err) {
+    console.error('fetchYouTube failed:', err);
     return null;
   }
 }

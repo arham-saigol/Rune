@@ -27,10 +27,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return new Response('Item not found', { status: 404 });
   }
 
-  const content = item.content || item.metaSummary;
+  const content = (item.content || item.metaSummary).slice(0, 30000);
   const result = await runSummaryAgent(content, mode);
 
   let fullText = '';
+  let completed = false;
   const encoder = new TextEncoder();
 
   const output = new ReadableStream({
@@ -39,18 +40,25 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       try {
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done) {
+            completed = true;
+            break;
+          }
           fullText += value;
           controller.enqueue(encoder.encode(value));
         }
+      } catch (err) {
+        console.error('Summary stream error:', err);
       } finally {
         controller.close();
-        db.insert(summaries).values({
-          itemId: id,
-          mode,
-          content: fullText,
-          createdAt: Date.now(),
-        }).run();
+        if (completed && fullText) {
+          db.insert(summaries).values({
+            itemId: id,
+            mode,
+            content: fullText,
+            createdAt: Date.now(),
+          }).run();
+        }
       }
     },
   });

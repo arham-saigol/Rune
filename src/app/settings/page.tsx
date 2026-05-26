@@ -28,15 +28,22 @@ export default function SettingsPage() {
       });
   }, []);
 
-  const saveSettings = () => {
-    fetch('/api/settings', {
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        ai_provider_priority: priority,
-        default_summary_mode: defaultMode,
-      }),
-    });
+  const [saving, setSaving] = useState(false);
+
+  const saveSettings = async () => {
+    setSaving(true);
+    try {
+      await fetch('/api/settings', {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          ai_provider_priority: priority,
+          default_summary_mode: defaultMode,
+        }),
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const createTag = () => {
@@ -117,8 +124,8 @@ export default function SettingsPage() {
         </select>
 
         <div>
-          <button onClick={saveSettings} className="btn">
-            save
+          <button onClick={saveSettings} className="btn" disabled={saving}>
+            {saving ? 'saving...' : 'save'}
           </button>
         </div>
       </section>

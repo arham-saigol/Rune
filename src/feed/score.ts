@@ -50,12 +50,13 @@ export function scoreFeed(): ScoredItem[] {
     .all();
 
   const recentEmbeddings = recentReads
-    .filter((r) => r.embedding)
-    .map((r) => float32ArrayFromBuffer(r.embedding as Buffer));
+    .map((r) => (r.embedding ? float32ArrayFromBuffer(r.embedding as Buffer) : null))
+    .filter((v): v is Float32Array => v !== null);
 
   const recencySimilarity = unreadItems.map((item) => {
     if (!item.embedding || recentEmbeddings.length === 0) return 0;
     const itemVec = float32ArrayFromBuffer(item.embedding as Buffer);
+    if (!itemVec) return 0;
     return Math.max(...recentEmbeddings.map((r) => cosineSimilarity(itemVec, r)));
   });
 
@@ -87,12 +88,13 @@ export function scoreFeed(): ScoredItem[] {
   // 3. Pinned Similarity
   const pinnedItems = db.select().from(items).where(eq(items.pinned, 1)).all();
   const pinnedEmbeddings = pinnedItems
-    .filter((p) => p.embedding)
-    .map((p) => float32ArrayFromBuffer(p.embedding as Buffer));
+    .map((p) => (p.embedding ? float32ArrayFromBuffer(p.embedding as Buffer) : null))
+    .filter((v): v is Float32Array => v !== null);
 
   const pinnedSimilarity = unreadItems.map((item) => {
     if (!item.embedding || pinnedEmbeddings.length === 0) return 0;
     const itemVec = float32ArrayFromBuffer(item.embedding as Buffer);
+    if (!itemVec) return 0;
     return Math.max(...pinnedEmbeddings.map((p) => cosineSimilarity(itemVec, p)));
   });
 

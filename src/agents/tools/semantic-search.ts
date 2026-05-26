@@ -16,11 +16,16 @@ export async function semanticSearch(query: string, limit = 5) {
 
   const allItems = db.select().from(items).all();
   const scored = allItems
-    .filter((item) => item.embedding)
-    .map((item) => ({
-      item,
-      score: cosineSimilarity(queryVec, float32ArrayFromBuffer(item.embedding as Buffer)),
-    }));
+    .map((item) => {
+      if (!item.embedding) return null;
+      const vec = float32ArrayFromBuffer(item.embedding as Buffer);
+      if (!vec) return null;
+      return {
+        item,
+        score: cosineSimilarity(queryVec, vec),
+      };
+    })
+    .filter((s): s is NonNullable<typeof s> => s !== null);
 
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, limit).map((s) => s.item);

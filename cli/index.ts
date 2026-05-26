@@ -13,12 +13,12 @@ program
   .action(fullSetup);
 
 program
-  .command('setup api')
+  .command('setup-api')
   .description('Re-configure API keys')
   .action(setupApi);
 
 program
-  .command('setup discord')
+  .command('setup-discord')
   .description('Re-configure Discord settings')
   .action(setupDiscord);
 

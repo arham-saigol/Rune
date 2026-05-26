@@ -14,13 +14,17 @@ export default function Filters({
   return (
     <div className="flex gap-2">
       <button
+        type="button"
         onClick={onToggleUnread}
+        aria-pressed={unreadOnly}
         className={`nav-pill ${unreadOnly ? 'nav-pill--active' : 'nav-pill--inactive'}`}
       >
         Unread
       </button>
       <button
+        type="button"
         onClick={onTogglePinned}
+        aria-pressed={pinnedOnly}
         className={`nav-pill ${pinnedOnly ? 'nav-pill--active' : 'nav-pill--inactive'}`}
       >
         Pinned

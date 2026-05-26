@@ -30,11 +30,15 @@ export default function AllPage() {
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [pinnedOnly, setPinnedOnly] = useState(false);
   const [searchResults, setSearchResults] = useState<Item[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/items?sort=created_desc')
       .then((r) => r.json())
-      .then((data) => setItems(data.items));
+      .then((data) => {
+        setItems(data.items);
+        setIsLoading(false);
+      });
     fetch('/api/tags')
       .then((r) => r.json())
       .then((data) => setTags(data.tags));
@@ -79,7 +83,9 @@ export default function AllPage() {
           onTogglePinned={() => setPinnedOnly((v) => !v)}
         />
       </div>
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="empty-state">loading…</div>
+      ) : filtered.length === 0 ? (
         <div className="empty-state">nothing saved yet ~ your archive is waiting</div>
       ) : (
         <CardGrid items={filtered} />

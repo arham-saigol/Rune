@@ -56,7 +56,7 @@ export default function Illustration({ spec }: { spec: IllustrationSpec | null }
           break;
         case 'line':
           if (el.x1 !== undefined && el.y1 !== undefined && el.x2 !== undefined && el.y2 !== undefined) {
-            node = rc.line(el.x1, el.y1, el.x2, el.y2, { stroke: el.stroke || '#1a1410', roughness: 1.5, strokeWidth: 1 });
+            node = rc.line(el.x1, el.y1, el.x2, el.y2, { ...opts, stroke: el.stroke || '#1a1410' });
           }
           break;
         case 'ellipse':

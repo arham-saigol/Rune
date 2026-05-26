@@ -18,12 +18,14 @@ export default function TagNav({ tags }: { tags: Tag[] }) {
     <nav className="flex gap-2 overflow-x-auto pb-2">
       <Link
         href="/"
+        aria-current={isActive('/') ? 'page' : undefined}
         className={`nav-pill ${isActive('/') ? 'nav-pill--active' : 'nav-pill--inactive'}`}
       >
         For You
       </Link>
       <Link
         href="/all"
+        aria-current={isActive('/all') ? 'page' : undefined}
         className={`nav-pill ${isActive('/all') ? 'nav-pill--active' : 'nav-pill--inactive'}`}
       >
         All
@@ -32,6 +34,7 @@ export default function TagNav({ tags }: { tags: Tag[] }) {
         <Link
           key={tag.id}
           href={`/tag/${tag.slug}`}
+          aria-current={pathname === `/tag/${tag.slug}` ? 'page' : undefined}
           className={`nav-pill ${pathname === `/tag/${tag.slug}` ? 'nav-pill--active' : 'nav-pill--inactive'}`}
         >
           {tag.name}

@@ -41,7 +41,7 @@ export default function Card({ item }: { item: Item }) {
 
         <div className="p-3">
           <div className="flex items-center gap-2 mb-1.5">
-            {isUnread && <span className="unread-dot" />}
+            {isUnread && <span className="unread-dot" aria-label="Unread" role="status" />}
             <span className="platform-badge">
               {PLATFORM_LABELS[item.platform] || item.platform}
             </span>
