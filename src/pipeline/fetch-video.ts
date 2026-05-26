@@ -39,6 +39,10 @@ export async function fetchVideo(url: string, id: string): Promise<string | null
       headers: { Authorization: `Token ${deepgramKey}` },
       body: audioBuffer,
     });
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Deepgram API error ${res.status} ${res.statusText}: ${body}`);
+    }
     const data = await res.json();
     const transcript = data.results?.channels?.[0]?.alternatives?.[0]?.transcript ?? null;
     unlinkSync(outputPath);

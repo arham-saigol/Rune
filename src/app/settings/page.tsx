@@ -29,11 +29,13 @@ export default function SettingsPage() {
   }, []);
 
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const saveSettings = async () => {
     setSaving(true);
+    setSaveError(null);
     try {
-      await fetch('/api/settings', {
+      const res = await fetch('/api/settings', {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -41,6 +43,12 @@ export default function SettingsPage() {
           default_summary_mode: defaultMode,
         }),
       });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `HTTP ${res.status}`);
+      }
+    } catch (err: any) {
+      setSaveError(err.message || 'Failed to save settings');
     } finally {
       setSaving(false);
     }
@@ -127,6 +135,9 @@ export default function SettingsPage() {
           <button onClick={saveSettings} className="btn" disabled={saving}>
             {saving ? 'saving...' : 'save'}
           </button>
+          {saveError && (
+            <p className="text-sm text-[var(--stamp)] mt-2">{saveError}</p>
+          )}
         </div>
       </section>
 

@@ -45,6 +45,9 @@ export function createBot() {
 
   bot.onNewMention(async (thread, message) => {
     if (allowedIds.size > 0 && !allowedIds.has((message.author as any).id)) {
+      console.error(
+        `[${new Date().toISOString()}] Unauthorized access attempt by user ${(message.author as any).username} (${(message.author as any).id}) in thread ${thread.id}`
+      );
       await thread.post('You are not authorized to use this bot.');
       return;
     }

@@ -4,6 +4,7 @@ import { items, tags, itemTags } from '@/db/schema';
 import { eq, and, like, desc, sql } from 'drizzle-orm';
 import { captureItem } from '@/pipeline/capture';
 import { semanticSearch } from '@/agents/tools/semantic-search';
+import { isPublicHost } from '@/lib/host-validation';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -80,16 +81,18 @@ export async function POST(req: NextRequest) {
   if (!url) {
     return NextResponse.json({ error: 'URL is required' }, { status: 400 });
   }
+  let parsed: URL;
   try {
-    const parsed = new URL(url);
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      return NextResponse.json({ error: 'URL must use http or https' }, { status: 400 });
-    }
-    if (parsed.hostname === 'localhost' || parsed.hostname.endsWith('.internal') || /^\d+\.\d+\.\d+\.\d+$/.test(parsed.hostname)) {
-      return NextResponse.json({ error: 'URL host is not allowed' }, { status: 400 });
-    }
+    parsed = new URL(url);
   } catch {
     return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    return NextResponse.json({ error: 'URL must use http or https' }, { status: 400 });
+  }
+  const publicHost = await isPublicHost(parsed.hostname);
+  if (!publicHost) {
+    return NextResponse.json({ error: 'URL host is not allowed' }, { status: 400 });
   }
   if (context && context.length > 10000) {
     return NextResponse.json({ error: 'Context exceeds 10,000 characters' }, { status: 400 });

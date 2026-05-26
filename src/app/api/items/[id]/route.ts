@@ -37,8 +37,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const db = getDb();
-  db.delete(itemTags).where(eq(itemTags.itemId, id)).run();
-  db.delete(summaries).where(eq(summaries.itemId, id)).run();
   db.delete(items).where(eq(items.id, id)).run();
   return NextResponse.json({ success: true });
 }

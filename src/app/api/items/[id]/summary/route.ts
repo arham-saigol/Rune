@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return new Response('Item not found', { status: 404 });
   }
 
-  const content = (item.content || item.metaSummary).slice(0, 30000);
+  const content = (item.content || item.metaSummary || '').slice(0, 30000);
   const result = await runSummaryAgent(content, mode);
 
   let fullText = '';

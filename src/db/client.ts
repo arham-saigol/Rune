@@ -20,6 +20,10 @@ export function initDatabase() {
   const sqlite = new Database(dbPath);
   sqlite.pragma('journal_mode = WAL');
   sqlite.pragma('foreign_keys = ON');
+  if (db) {
+    sqlite.close();
+    return db;
+  }
   sqlite.exec(`
     CREATE TABLE IF NOT EXISTS items (
       id TEXT PRIMARY KEY,
@@ -83,9 +87,6 @@ export function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_items_pinned ON items(pinned);
     CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
   `);
-  // Ensure the lazy db uses the same connection
-  if (!db) {
-    db = drizzle(sqlite, { schema });
-  }
+  db = drizzle(sqlite, { schema });
   return db;
 }

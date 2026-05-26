@@ -11,6 +11,9 @@ export function float32ArrayFromBuffer(buf: Buffer): Float32Array | null {
 }
 
 export function cosineSimilarity(a: Float32Array, b: Float32Array): number {
+  if (a.length !== b.length) {
+    throw new Error(`cosineSimilarity: vector length mismatch: ${a.length} !== ${b.length}`);
+  }
   let dot = 0, normA = 0, normB = 0;
   for (let i = 0; i < a.length; i++) {
     dot += a[i] * b[i];

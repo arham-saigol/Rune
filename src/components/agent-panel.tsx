@@ -26,6 +26,7 @@ export default function AgentPanel({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
+  const [conversationId] = useState(() => crypto.randomUUID());
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function AgentPanel({
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ message: contextPrompt, contextItemId: contextItem?.id }),
+      body: JSON.stringify({ message: contextPrompt, contextItemId: contextItem?.id, conversationId }),
     });
 
     const reader = res.body?.getReader();

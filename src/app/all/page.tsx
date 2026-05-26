@@ -34,11 +34,13 @@ export default function AllPage() {
 
   useEffect(() => {
     fetch('/api/items?sort=created_desc')
-      .then((r) => r.json())
-      .then((data) => {
-        setItems(data.items);
-        setIsLoading(false);
-      });
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data) => setItems(data.items))
+      .catch((err) => console.error('Failed to load items:', err))
+      .finally(() => setIsLoading(false));
     fetch('/api/tags')
       .then((r) => r.json())
       .then((data) => setTags(data.tags));
