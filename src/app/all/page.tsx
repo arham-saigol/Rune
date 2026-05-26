@@ -31,16 +31,29 @@ export default function AllPage() {
   const [pinnedOnly, setPinnedOnly] = useState(false);
   const [searchResults, setSearchResults] = useState<Item[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
+  const loadItems = () => {
+    setIsLoading(true);
+    setError(null);
     fetch('/api/items?sort=created_desc')
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
-      .then((data) => setItems(data.items))
-      .catch((err) => console.error('Failed to load items:', err))
+      .then((data) => {
+        setItems(data.items);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error('Failed to load items:', err);
+        setError(err);
+      })
       .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    loadItems();
     fetch('/api/tags')
       .then((r) => r.json())
       .then((data) => setTags(data.tags));
@@ -53,7 +66,8 @@ export default function AllPage() {
     }
     fetch(`/api/items?q=${encodeURIComponent(q)}`)
       .then((r) => r.json())
-      .then((data) => setSearchResults(data.items));
+      .then((data) => setSearchResults(data.items))
+      .catch((err) => console.error('Search failed:', err));
   };
 
   const displayed = searchResults ?? items;
@@ -85,7 +99,12 @@ export default function AllPage() {
           onTogglePinned={() => setPinnedOnly((v) => !v)}
         />
       </div>
-      {isLoading ? (
+      {error ? (
+        <div className="empty-state">
+          <p className="mb-3">failed to load items</p>
+          <button onClick={loadItems} className="btn">retry</button>
+        </div>
+      ) : isLoading ? (
         <div className="empty-state">loading…</div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">nothing saved yet ~ your archive is waiting</div>

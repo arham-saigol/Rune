@@ -43,6 +43,12 @@ export function createBot() {
       .filter(Boolean)
   );
 
+  if (allowedIds.size === 0 && process.env.NODE_ENV !== 'development') {
+    throw new Error(
+      'ALLOWED_DISCORD_USER_IDS is required. Set it or run in development mode.'
+    );
+  }
+
   bot.onNewMention(async (thread, message) => {
     if (allowedIds.size > 0 && !allowedIds.has((message.author as any).id)) {
       console.error(

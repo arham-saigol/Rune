@@ -26,12 +26,17 @@ export default function AgentPanel({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
-  const [conversationId] = useState(() => crypto.randomUUID());
+  const [conversationId, setConversationId] = useState(() => crypto.randomUUID());
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    setMessages([]);
+    setConversationId(crypto.randomUUID());
+  }, [contextItem?.id]);
 
   const send = async () => {
     if (!input.trim() || streaming) return;

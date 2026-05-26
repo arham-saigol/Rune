@@ -35,13 +35,17 @@ export default function TagPage() {
 
   useEffect(() => {
     setIsLoading(true);
+    setItems([]);
     fetch(`/api/items?tag=${encodeURIComponent(slug)}&sort=created_desc`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
       .then((data) => setItems(data.items))
-      .catch((err) => console.error('Failed to load tag items:', err))
+      .catch((err) => {
+        console.error('Failed to load tag items:', err);
+        setItems([]);
+      })
       .finally(() => setIsLoading(false));
     fetch('/api/tags')
       .then((r) => r.json())
