@@ -58,20 +58,20 @@ export default function AllPage() {
   });
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-6">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Rune</h1>
-        <Link href="/settings" className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-          Settings
+    <main className="max-w-6xl mx-auto px-5 py-8">
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="logotype">Rune</h1>
+        <Link href="/settings" className="sketch-link text-sm">
+          settings
         </Link>
       </header>
-      <div className="mb-4">
+      <div className="mb-5">
         <SearchBar onSearch={handleSearch} />
       </div>
       <div className="mb-4">
         <TagNav tags={tags} />
       </div>
-      <div className="mb-4">
+      <div className="mb-5">
         <Filters
           unreadOnly={unreadOnly}
           pinnedOnly={pinnedOnly}
@@ -79,7 +79,11 @@ export default function AllPage() {
           onTogglePinned={() => setPinnedOnly((v) => !v)}
         />
       </div>
-      <CardGrid items={filtered} />
+      {filtered.length === 0 ? (
+        <div className="empty-state">nothing saved yet ~ your archive is waiting</div>
+      ) : (
+        <CardGrid items={filtered} />
+      )}
     </main>
   );
 }

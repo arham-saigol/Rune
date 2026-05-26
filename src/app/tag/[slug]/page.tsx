@@ -48,21 +48,21 @@ export default function TagPage() {
   });
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-6">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Rune</h1>
-        <Link href="/settings" className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-          Settings
+    <main className="max-w-6xl mx-auto px-5 py-8">
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="logotype">Rune</h1>
+        <Link href="/settings" className="sketch-link text-sm">
+          settings
         </Link>
       </header>
-      <div className="mb-4">
+      <div className="mb-5">
         <SearchBar />
       </div>
       <div className="mb-4">
         <TagNav tags={tags} />
       </div>
-      <div className="mb-4 flex items-center gap-3">
-        <h2 className="text-lg font-semibold capitalize">{slug.replace(/-/g, ' ')}</h2>
+      <div className="mb-5 flex items-baseline gap-4">
+        <h2 className="section-head capitalize">{slug.replace(/-/g, ' ')}</h2>
         <Filters
           unreadOnly={unreadOnly}
           pinnedOnly={pinnedOnly}
@@ -70,7 +70,11 @@ export default function TagPage() {
           onTogglePinned={() => setPinnedOnly((v) => !v)}
         />
       </div>
-      <CardGrid items={filtered} />
+      {filtered.length === 0 ? (
+        <div className="empty-state">nothing tagged here yet ~</div>
+      ) : (
+        <CardGrid items={filtered} />
+      )}
     </main>
   );
 }

@@ -68,75 +68,84 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-6">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <Link href="/" className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-          ← Back
+    <main className="max-w-3xl mx-auto px-5 py-8">
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="logotype">Settings</h1>
+        <Link href="/" className="sketch-link text-sm">
+          &larr; back
         </Link>
       </header>
 
-      <section className="card p-4 mb-6">
-        <h2 className="text-lg font-semibold mb-3">AI Provider</h2>
-        <div className="flex gap-4 mb-3">
-          <label className="flex items-center gap-2 text-sm">
+      <section className="settings-section mb-6">
+        <h2 className="section-head mb-4">AI Provider</h2>
+        <div className="flex gap-5 mb-5">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
             <input
               type="radio"
               name="priority"
               value="gateway_first"
               checked={priority === 'gateway_first'}
               onChange={(e) => setPriority(e.target.value)}
+              className="accent-[var(--ink)]"
             />
-            Gateway First
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>Gateway First</span>
           </label>
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
             <input
               type="radio"
               name="priority"
               value="direct_first"
               checked={priority === 'direct_first'}
               onChange={(e) => setPriority(e.target.value)}
+              className="accent-[var(--ink)]"
             />
-            Direct First
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>Direct First</span>
           </label>
         </div>
-        <h2 className="text-lg font-semibold mb-3">Default Summary Mode</h2>
+
+        <h2 className="section-head mb-4">Default Summary Mode</h2>
         <select
           value={defaultMode}
           onChange={(e) => setDefaultMode(e.target.value)}
-          className="input mb-3"
+          className="input mb-5 w-full max-w-xs border-b border-[var(--rule)]"
+          style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}
         >
           <option value="short">Short Summary</option>
           <option value="five_points">Five Points</option>
-          <option value="eli5">Explain Like I'm 5</option>
-          <option value="devils_advocate">Devil's Advocate</option>
+          <option value="eli5">Explain Like I&apos;m 5</option>
+          <option value="devils_advocate">Devil&apos;s Advocate</option>
         </select>
-        <button onClick={saveSettings} className="btn">
-          Save Preferences
-        </button>
+
+        <div>
+          <button onClick={saveSettings} className="btn">
+            save
+          </button>
+        </div>
       </section>
 
-      <section className="card p-4">
-        <h2 className="text-lg font-semibold mb-3">Tags</h2>
-        <div className="flex gap-2 mb-4">
+      <section className="settings-section">
+        <h2 className="section-head mb-4">Tags</h2>
+        <div className="flex gap-3 mb-5">
           <input
             type="text"
             value={newTagName}
             onChange={(e) => setNewTagName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && createTag()}
-            placeholder="New tag name"
+            placeholder="new tag name..."
             className="input flex-1"
           />
           <button onClick={createTag} className="btn">
-            Add
+            add
           </button>
         </div>
         <div className="space-y-2">
           {tags.map((tag) => (
-            <div key={tag.id} className="flex items-center justify-between bg-[#fff8ee] rounded-lg px-3 py-2">
-              <span className="text-sm font-medium">{tag.name}</span>
+            <div key={tag.id} className="flex items-center justify-between bg-[var(--paper-warm)] rounded-[3px] px-4 py-2.5 border border-[var(--rule)]">
+              <span className="tag-pill" style={{ transform: 'none' }}>
+                {tag.name}
+              </span>
               {!tag.isDefault && (
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={() => {
                       const name = prompt('Rename tag', tag.name);
@@ -145,15 +154,16 @@ export default function SettingsPage() {
                         setTags((prev) => prev.map((t) => (t.id === tag.id ? { ...t, name } : t)));
                       }
                     }}
-                    className="text-xs text-[#5a3e2b] hover:text-[#2c1810]"
+                    className="sketch-link text-xs"
                   >
-                    Rename
+                    rename
                   </button>
                   <button
                     onClick={() => deleteTag(tag.id)}
-                    className="text-xs text-red-600 hover:text-red-800"
+                    className="text-xs text-[var(--stamp)] hover:opacity-70 transition-opacity"
+                    style={{ fontFamily: 'var(--font-mono)' }}
                   >
-                    Delete
+                    delete
                   </button>
                 </div>
               )}

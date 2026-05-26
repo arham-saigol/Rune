@@ -11,13 +11,16 @@ export default function SearchBar({ onSearch }: { onSearch?: (q: string) => void
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full relative">
+      <span className="absolute left-0 top-1/2 -translate-y-1/2 text-[var(--pencil)] text-sm select-none pointer-events-none">
+        ~
+      </span>
       <input
         type="text"
-        placeholder="Search your archive..."
+        placeholder="search your archive..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="input w-full"
+        className="input w-full pl-4"
       />
     </form>
   );

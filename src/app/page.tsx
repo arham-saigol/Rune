@@ -74,15 +74,15 @@ export default function HomePage() {
   const loadMore = () => setPage((p) => p + 1);
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-6">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Rune</h1>
-        <Link href="/settings" className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-          Settings
+    <main className="max-w-6xl mx-auto px-5 py-8">
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="logotype">Rune</h1>
+        <Link href="/settings" className="sketch-link text-sm">
+          settings
         </Link>
       </header>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <SearchBar onSearch={handleSearch} />
       </div>
 
@@ -90,7 +90,7 @@ export default function HomePage() {
         <TagNav tags={tags} />
       </div>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <Filters
           unreadOnly={unreadOnly}
           pinnedOnly={pinnedOnly}
@@ -100,14 +100,16 @@ export default function HomePage() {
       </div>
 
       {loading ? (
-        <div className="text-sm text-[#8a6e5b]">Loading...</div>
+        <div className="empty-state">loading your collection...</div>
+      ) : visible.length === 0 ? (
+        <div className="empty-state">nothing here yet ~ save something to get started</div>
       ) : (
         <>
           <CardGrid items={visible} />
           {visible.length < filtered.length && (
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <button onClick={loadMore} className="btn">
-                Load more
+                more
               </button>
             </div>
           )}

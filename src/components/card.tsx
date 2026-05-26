@@ -31,27 +31,26 @@ export default function Card({ item }: { item: Item }) {
   const isUnread = item.status === 'unread';
 
   return (
-    <Link href={`/item/${item.id}`} className="block">
-      <div
-        className={`card overflow-hidden ${isUnread ? 'opacity-100' : 'opacity-60'}`}
-      >
-        <div className="aspect-[10/7] bg-[#eee0d0]">
+    <Link href={`/item/${item.id}`} className="block group">
+      <div className={`card overflow-hidden ${isUnread ? '' : 'opacity-65'}`}>
+        {item.pinned ? <div className="pin-tape" /> : null}
+
+        <div className="illo-frame aspect-[10/7]">
           <Illustration spec={illustration} />
         </div>
+
         <div className="p-3">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[0.7rem] uppercase tracking-wide text-[#8a6e5b]">
+            {isUnread && <span className="unread-dot" />}
+            <span className="platform-badge">
               {PLATFORM_LABELS[item.platform] || item.platform}
             </span>
-            {item.pinned ? (
-              <span className="text-[0.7rem] text-amber-600">★</span>
-            ) : null}
           </div>
-          <h3 className="text-sm font-semibold leading-snug line-clamp-2 mb-2">
+          <h3 className="text-sm font-semibold leading-snug line-clamp-2 mb-2 group-hover:text-[var(--ink-faded)] transition-colors">
             {item.title}
           </h3>
           {item.tags && item.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {item.tags.map((tag) => (
                 <span key={tag.id} className="tag-pill">
                   {tag.name}
