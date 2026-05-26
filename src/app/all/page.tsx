@@ -30,11 +30,30 @@ export default function AllPage() {
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [pinnedOnly, setPinnedOnly] = useState(false);
   const [searchResults, setSearchResults] = useState<Item[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const loadItems = () => {
+    setIsLoading(true);
+    setError(null);
+    fetch('/api/items?sort=created_desc')
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        setItems(data.items);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error('Failed to load items:', err);
+        setError(err);
+      })
+      .finally(() => setIsLoading(false));
+  };
 
   useEffect(() => {
-    fetch('/api/items?sort=created_desc')
-      .then((r) => r.json())
-      .then((data) => setItems(data.items));
+    loadItems();
     fetch('/api/tags')
       .then((r) => r.json())
       .then((data) => setTags(data.tags));
@@ -47,7 +66,8 @@ export default function AllPage() {
     }
     fetch(`/api/items?q=${encodeURIComponent(q)}`)
       .then((r) => r.json())
-      .then((data) => setSearchResults(data.items));
+      .then((data) => setSearchResults(data.items))
+      .catch((err) => console.error('Search failed:', err));
   };
 
   const displayed = searchResults ?? items;
@@ -58,20 +78,20 @@ export default function AllPage() {
   });
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-6">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Rune</h1>
-        <Link href="/settings" className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-          Settings
+    <main className="max-w-6xl mx-auto px-5 py-8">
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="logotype">Rune</h1>
+        <Link href="/settings" className="sketch-link text-sm">
+          settings
         </Link>
       </header>
-      <div className="mb-4">
+      <div className="mb-5">
         <SearchBar onSearch={handleSearch} />
       </div>
       <div className="mb-4">
         <TagNav tags={tags} />
       </div>
-      <div className="mb-4">
+      <div className="mb-5">
         <Filters
           unreadOnly={unreadOnly}
           pinnedOnly={pinnedOnly}
@@ -79,7 +99,18 @@ export default function AllPage() {
           onTogglePinned={() => setPinnedOnly((v) => !v)}
         />
       </div>
-      <CardGrid items={filtered} />
+      {error ? (
+        <div className="empty-state">
+          <p className="mb-3">failed to load items</p>
+          <button onClick={loadItems} className="btn">retry</button>
+        </div>
+      ) : isLoading ? (
+        <div className="empty-state">loading…</div>
+      ) : filtered.length === 0 ? (
+        <div className="empty-state">nothing saved yet ~ your archive is waiting</div>
+      ) : (
+        <CardGrid items={filtered} />
+      )}
     </main>
   );
 }

@@ -10,13 +10,16 @@ function readEnv(): Record<string, string> {
   const env: Record<string, string> = {};
   for (const line of content.split('\n')) {
     const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
-    if (match) env[match[1]] = match[2];
+    if (match) env[match[1]] = match[2].replace(/^"(.*)"$/, '$1').replace(/\\n/g, '\n').replace(/\\"/g, '"');
   }
   return env;
 }
 
 function writeEnv(env: Record<string, string>) {
-  const lines = Object.entries(env).map(([k, v]) => `${k}=${v}`);
+  const lines = Object.entries(env).map(([k, v]) => {
+    const escaped = v.replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    return `${k}="${escaped}"`;
+  });
   writeFileSync(ENV_PATH, lines.join('\n') + '\n');
 }
 

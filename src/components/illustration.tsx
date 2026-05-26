@@ -36,30 +36,37 @@ export default function Illustration({ spec }: { spec: IllustrationSpec | null }
 
     for (const el of spec.elements) {
       let node: SVGElement | null = null;
+      const opts = {
+        fill: el.fill,
+        stroke: el.stroke || '#1a1410',
+        roughness: 1.2,
+        bowing: 1.5,
+        strokeWidth: 1.2,
+      };
       switch (el.type) {
         case 'circle':
           if (el.x !== undefined && el.y !== undefined && el.diameter !== undefined) {
-            node = rc.circle(el.x, el.y, el.diameter, { fill: el.fill, stroke: el.stroke });
+            node = rc.circle(el.x, el.y, el.diameter, opts);
           }
           break;
         case 'rectangle':
           if (el.x !== undefined && el.y !== undefined && el.width !== undefined && el.height !== undefined) {
-            node = rc.rectangle(el.x, el.y, el.width, el.height, { fill: el.fill, stroke: el.stroke });
+            node = rc.rectangle(el.x, el.y, el.width, el.height, opts);
           }
           break;
         case 'line':
           if (el.x1 !== undefined && el.y1 !== undefined && el.x2 !== undefined && el.y2 !== undefined) {
-            node = rc.line(el.x1, el.y1, el.x2, el.y2, { stroke: el.stroke });
+            node = rc.line(el.x1, el.y1, el.x2, el.y2, { ...opts, stroke: el.stroke || '#1a1410' });
           }
           break;
         case 'ellipse':
           if (el.x !== undefined && el.y !== undefined && el.width !== undefined && el.height !== undefined) {
-            node = rc.ellipse(el.x, el.y, el.width, el.height, { fill: el.fill, stroke: el.stroke });
+            node = rc.ellipse(el.x, el.y, el.width, el.height, opts);
           }
           break;
         case 'path':
           if (el.d) {
-            node = rc.path(el.d, { fill: el.fill, stroke: el.stroke });
+            node = rc.path(el.d, opts);
           }
           break;
         case 'text':
@@ -67,9 +74,9 @@ export default function Illustration({ spec }: { spec: IllustrationSpec | null }
             const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             textNode.setAttribute('x', String(el.x));
             textNode.setAttribute('y', String(el.y));
-            textNode.setAttribute('font-size', String(el.fontSize ?? 12));
-            textNode.setAttribute('fill', el.fill ?? '#2c1810');
-            textNode.setAttribute('font-family', 'cursive');
+            textNode.setAttribute('font-size', String(el.fontSize ?? 14));
+            textNode.setAttribute('fill', el.fill ?? '#1a1410');
+            textNode.setAttribute('font-family', 'Caveat, cursive');
             textNode.textContent = el.content;
             node = textNode;
           }
@@ -87,7 +94,7 @@ export default function Illustration({ spec }: { spec: IllustrationSpec | null }
     <svg
       ref={svgRef}
       viewBox="0 0 200 140"
-      className="w-full h-auto"
+      className="w-full h-full"
       style={{ background: spec.background }}
     />
   );

@@ -20,9 +20,14 @@ interface Item {
 
 export default function CardGrid({ items }: { items: Item[] }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((item) => (
-        <Card key={item.id} item={item} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      {items.map((item, i) => (
+        <div
+          key={item.id}
+          style={{ transform: `rotate(${(i % 5 - 2) * 0.3}deg)` }}
+        >
+          <Card item={item} />
+        </div>
       ))}
     </div>
   );

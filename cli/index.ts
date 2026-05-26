@@ -7,18 +7,28 @@ import { startService, restartService, stopService } from './service';
 const program = new Command();
 program.name('rune').description('Rune CLI').version('1.0.0');
 
-program
+const setupCmd = program
   .command('setup')
   .description('Full setup wizard')
   .action(fullSetup);
 
+setupCmd
+  .command('api')
+  .description('Deprecated alias for setup-api')
+  .action(setupApi);
+
+setupCmd
+  .command('discord')
+  .description('Deprecated alias for setup-discord')
+  .action(setupDiscord);
+
 program
-  .command('setup api')
+  .command('setup-api')
   .description('Re-configure API keys')
   .action(setupApi);
 
 program
-  .command('setup discord')
+  .command('setup-discord')
   .description('Re-configure Discord settings')
   .action(setupDiscord);
 

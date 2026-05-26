@@ -50,7 +50,23 @@ export async function runLibrarian(
     fetchedContent = await webFetch(url);
   }
 
-  const prompt = `URL: ${url}\nUser context: ${userContext ?? 'none'}\nAvailable tags: ${tagList}\n\nContent:\n${fetchedContent ?? 'Could not fetch content automatically.'}`;
+  const MAX_CONTENT = 30000; // keep under model context-window limits
+  let safeContent: string;
+  if (!fetchedContent) {
+    safeContent = 'Could not fetch content automatically.';
+  } else if (fetchedContent.length <= MAX_CONTENT) {
+    safeContent = fetchedContent;
+  } else {
+    const trimmed = fetchedContent.slice(0, MAX_CONTENT);
+    const lastStop = Math.max(
+      trimmed.lastIndexOf('.'),
+      trimmed.lastIndexOf('!'),
+      trimmed.lastIndexOf('?'),
+      trimmed.lastIndexOf('\n')
+    );
+    safeContent = lastStop > 0 ? trimmed.slice(0, lastStop + 1) + '...' : trimmed + '...';
+  }
+  const prompt = `URL: ${url}\nUser context: ${userContext ?? 'none'}\nAvailable tags: ${tagList}\n\nContent:\n${safeContent}`;
 
   const result = await generateObject({
     model: getModel('deepseek-v4-pro'),

@@ -40,25 +40,23 @@ export default function SummaryViewer({ itemId, content }: { itemId: string; con
 
   return (
     <div>
-      <div className="flex gap-2 flex-wrap mb-2">
+      <div className="flex gap-2 flex-wrap mb-3">
         {SUMMARY_MODES.map((m) => (
           <button
             key={m.slug}
             onClick={() => setMode(m.slug)}
-            className={`px-3 py-1 rounded-full text-sm transition ${
-              mode === m.slug ? 'bg-[#2c1810] text-[#f5e6d3]' : 'bg-[#e8d5c0] text-[#5a3e2b] hover:bg-[#d4c0a8]'
-            }`}
+            className={`nav-pill ${mode === m.slug ? 'nav-pill--active' : 'nav-pill--inactive'}`}
           >
             {m.label}
           </button>
         ))}
       </div>
-      <div className="bg-[#fff8ee] border border-[#e8d5c0] rounded-lg p-4 min-h-[120px]">
+      <div className="bg-[var(--card-bg)] border border-[var(--rule)] rounded-[3px] p-5 min-h-[120px]">
         {loading && !summary ? (
-          <div className="animate-pulse space-y-2">
-            <div className="h-4 bg-[#e8d5c0] rounded w-3/4" />
-            <div className="h-4 bg-[#e8d5c0] rounded w-1/2" />
-            <div className="h-4 bg-[#e8d5c0] rounded w-5/6" />
+          <div className="space-y-3">
+            <div className="skel h-4 w-3/4" />
+            <div className="skel h-4 w-1/2" />
+            <div className="skel h-4 w-5/6" />
           </div>
         ) : (
           <div className="text-sm leading-relaxed whitespace-pre-wrap">{summary || content}</div>

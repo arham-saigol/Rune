@@ -92,74 +92,86 @@ export default function ItemPage() {
 
   if (!item) {
     return (
-      <main className="max-w-3xl mx-auto px-4 py-6">
-        <div className="text-sm text-[#8a6e5b]">Loading...</div>
+      <main className="max-w-3xl mx-auto px-5 py-8">
+        <div className="empty-state text-base">loading...</div>
       </main>
     );
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-6">
-      <div className="flex items-center justify-between mb-4">
-        <Link href="/" className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-          ← Back
+    <main className="max-w-3xl mx-auto px-5 py-8">
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="sketch-link text-sm">
+          &larr; back
         </Link>
-        <div className="flex gap-2">
-          <button onClick={togglePin} className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-            {item.pinned ? 'Unpin' : 'Pin'}
+        <div className="flex gap-4">
+          <button onClick={togglePin} className="sketch-link text-sm">
+            {item.pinned ? 'unpin' : 'pin'}
           </button>
-          <button onClick={() => setPanelOpen(true)} className="text-sm text-[#5a3e2b] hover:text-[#2c1810]">
-            Ask Rune
+          <button onClick={() => setPanelOpen(true)} className="sketch-link text-sm">
+            ask rune
           </button>
         </div>
       </div>
 
-      <article className="card p-6 mb-6">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-[0.7rem] uppercase tracking-wide text-[#8a6e5b]">
+      <article className="settings-section mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="platform-badge">
             {PLATFORM_LABELS[item.platform] || item.platform}
           </span>
-          <span className="text-[0.7rem] text-[#8a6e5b]">
-            {new Date(item.createdAt).toLocaleDateString()}
+          <span className="text-[0.65rem] text-[var(--pencil)]" style={{ fontFamily: 'var(--font-mono)' }}>
+            {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </span>
+          {item.pinned ? (
+            <span className="text-xs text-[var(--washi)]" style={{ fontFamily: 'var(--font-mono)' }}>
+              pinned
+            </span>
+          ) : null}
         </div>
-        <h1 className="text-xl font-bold mb-2">{item.title}</h1>
+
+        <h1 className="text-xl font-bold mb-2 leading-tight" style={{ fontFamily: 'var(--font-editorial)' }}>
+          {item.title}
+        </h1>
+
         <a
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-[#5a3e2b] hover:text-[#2c1810] underline mb-4 block truncate"
+          className="sketch-link text-sm block truncate mb-4"
         >
           {item.url}
         </a>
-        <div className="flex flex-wrap gap-1 mb-4">
-          {item.tags.map((tag) => (
-            <span key={tag.id} className="tag-pill">
-              {tag.name}
-            </span>
-          ))}
-        </div>
 
-        <div className="mb-4">
-          <div className="flex gap-2 flex-wrap mb-2">
+        {item.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-5">
+            {item.tags.map((tag) => (
+              <span key={tag.id} className="tag-pill">
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <hr className="sketch-rule" />
+
+        <div className="mb-5">
+          <div className="flex gap-2 flex-wrap mb-3">
             {SUMMARY_MODES.map((m) => (
               <button
                 key={m.slug}
                 onClick={() => setMode(m.slug)}
-                className={`px-3 py-1 rounded-full text-sm transition ${
-                  mode === m.slug ? 'bg-[#2c1810] text-[#f5e6d3]' : 'bg-[#e8d5c0] text-[#5a3e2b] hover:bg-[#d4c0a8]'
-                }`}
+                className={`nav-pill ${mode === m.slug ? 'nav-pill--active' : 'nav-pill--inactive'}`}
               >
                 {m.label}
               </button>
             ))}
           </div>
-          <div className="bg-[#fff8ee] border border-[#e8d5c0] rounded-lg p-4 min-h-[120px]">
+          <div className="bg-[var(--paper-warm)] border border-[var(--rule)] rounded-[3px] p-5 min-h-[120px]">
             {loading && !summary ? (
-              <div className="animate-pulse space-y-2">
-                <div className="h-4 bg-[#e8d5c0] rounded w-3/4" />
-                <div className="h-4 bg-[#e8d5c0] rounded w-1/2" />
-                <div className="h-4 bg-[#e8d5c0] rounded w-5/6" />
+              <div className="space-y-3">
+                <div className="skel h-4 w-3/4" />
+                <div className="skel h-4 w-1/2" />
+                <div className="skel h-4 w-5/6" />
               </div>
             ) : (
               <div className="text-sm leading-relaxed whitespace-pre-wrap">{summary || item.metaSummary}</div>
@@ -168,10 +180,13 @@ export default function ItemPage() {
         </div>
 
         {item.content && (
-          <div className="prose prose-sm max-w-none">
-            <h3 className="text-base font-semibold mb-2">Full Content</h3>
-            <div className="text-sm leading-relaxed whitespace-pre-wrap">{item.content}</div>
-          </div>
+          <>
+            <hr className="sketch-rule" />
+            <div>
+              <h3 className="section-head mb-3">Full Content</h3>
+              <div className="text-sm leading-relaxed whitespace-pre-wrap">{item.content}</div>
+            </div>
+          </>
         )}
       </article>
 

@@ -11,7 +11,8 @@ export async function fetchWebContent(url: string): Promise<string | null> {
     const exa = getExa();
     const result = await exa.getContents([url], { text: true });
     return result.results[0]?.text ?? null;
-  } catch {
+  } catch (err) {
+    console.error('fetchWebContent failed:', err);
     return null;
   }
 }

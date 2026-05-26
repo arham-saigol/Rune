@@ -5,11 +5,21 @@ import { eq } from 'drizzle-orm';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const body = await req.json();
-  const db = getDb();
-  if (body.name) {
-    db.update(tags).set({ name: body.name }).where(eq(tags.id, Number(id))).run();
+  const numericId = Number(id);
+  if (!Number.isFinite(numericId) || numericId <= 0 || !Number.isInteger(numericId)) {
+    return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
   }
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+  if (typeof body.name !== 'string' || !body.name.trim()) {
+    return NextResponse.json({ error: 'Invalid name' }, { status: 400 });
+  }
+  const db = getDb();
+  db.update(tags).set({ name: body.name.trim() }).where(eq(tags.id, numericId)).run();
   return NextResponse.json({ success: true });
 }
 

@@ -36,7 +36,28 @@ export function createBot() {
     state: memoryStateAdapter as any,
   });
 
+  const allowedIds = new Set(
+    (process.env.ALLOWED_DISCORD_USER_IDS || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+  );
+
+  if (allowedIds.size === 0 && process.env.NODE_ENV !== 'development') {
+    throw new Error(
+      'ALLOWED_DISCORD_USER_IDS is required. Set it or run in development mode.'
+    );
+  }
+
   bot.onNewMention(async (thread, message) => {
+    if (allowedIds.size > 0 && !allowedIds.has((message.author as any).id)) {
+      console.error(
+        `[${new Date().toISOString()}] Unauthorized access attempt by user ${(message.author as any).username} (${(message.author as any).id}) in thread ${thread.id}`
+      );
+      await thread.post('You are not authorized to use this bot.');
+      return;
+    }
+
     await thread.subscribe();
 
     const userMessage = message.text;
